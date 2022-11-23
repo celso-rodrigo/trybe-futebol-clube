@@ -30,5 +30,11 @@ describe('Tests of /teams', () => {
       expect(response.status).to.be.equal(200);
       expect(response.body).to.be.deep.equal(teamsMock[4]);
     });
+
+    it('should return not found when a invalid id is sent', async () => {
+      const response = await chai.request(app).get('/teams/99');
+      expect(response.status).to.be.equal(404);
+      expect(response.body.message).to.be.equal('No team Found');
+    });
   });
 });

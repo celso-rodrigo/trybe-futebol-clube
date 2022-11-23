@@ -8,6 +8,7 @@ import App from '../app';
 
 import { Response } from 'superagent';
 import JwtToken from '../middlewares/JwtToken';
+import LoginService from '../services/LoginServices';
 
 chai.use(chaiHttp);
 
@@ -51,6 +52,20 @@ describe('Tests of /login', () => {
       expect(response.status).to.be.equal(401);
       expect(response.body.message).to.be.equal(res.INVALID_FIELDS);
     });
+
+    it('shouldn\'t be possible to login with a nonexistent email', async () => {
+      const body = { email: "nonexistent@email.com", password: "secret_admin" };
+      const response = await chai.request(app).post('/login').send(body);
+      expect(response.status).to.be.equal(401);
+      expect(response.body.message).to.be.equal(res.INVALID_FIELDS);
+    });
+
+    it('shouldn\'t be possible to login with the wrong password', async () => {
+      const body = { email: "admin@admin.com", password: "wrongPassword" };
+      const response = await chai.request(app).post('/login').send(body);
+      expect(response.status).to.be.equal(401);
+      expect(response.body.message).to.be.equal(res.INVALID_FIELDS);
+    });
   });
 
   describe('GET /login/validate', () => {
@@ -77,4 +92,13 @@ describe('Tests of /login', () => {
     });
   });
 
+  describe('Tests of loginServices.findUser method', () => {
+    it('LoginService should return not found when a invalid id is sent', async () => {
+      const loginService = new LoginService();
+      const result = await loginService.findById(999)
+      expect(result.error).to.be.equal(true)
+      expect(result.response.status).to.be.equal(401)
+      expect(result.response.message).to.be.equal(res.INVALID_FIELDS)
+    });
+  });
 });
