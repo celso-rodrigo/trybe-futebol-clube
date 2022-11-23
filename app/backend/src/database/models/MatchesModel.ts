@@ -26,7 +26,7 @@ MatchesModel.init({
   timestamps: false,
 });
 
-TeamsModel.belongsTo(MatchesModel, { foreignKey: 'home_teams', as: 'homeTeams' });
-TeamsModel.belongsTo(MatchesModel, { foreignKey: 'away_teams', as: 'awayTea' });
+MatchesModel.belongsTo(TeamsModel, { foreignKey: 'homeTeam', as: 'teamHome' });
+MatchesModel.belongsTo(TeamsModel, { foreignKey: 'awayTeam', as: 'teamAway' });
 
 export default MatchesModel;
