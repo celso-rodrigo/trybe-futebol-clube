@@ -15,10 +15,11 @@ const { expect } = chai;
 
 describe('Tests of /login', () => {
   describe('POST /login', () => {
-    it('should be able to login', async () => {
-      const body = {};
-      const response = await chai.request(App).post('/login').send(body);
+    it('should be able to login and return a token', async () => {
+      const body = { email: "admin@admin.com", password: "secret_admin" };
+      const response = await chai.request(app).post('/login').send(body);
       expect(response.status).to.be.equal(200);
+      expect(response.body).to.have.property('token');
     })
   });
 });
