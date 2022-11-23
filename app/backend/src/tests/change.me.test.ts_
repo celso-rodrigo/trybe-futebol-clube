@@ -23,7 +23,7 @@ describe('Seu teste', () => {
 
   // before(async () => {
   //   sinon
-  //     .stub(Example, "findOne")
+  //     .stub(Example, "findOne")  
   //     .resolves({
   //       ...<Seu mock>
   //     } as Example);
