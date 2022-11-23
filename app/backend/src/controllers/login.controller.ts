@@ -14,4 +14,15 @@ export default class LoginController {
       res.status(status).json({ token: message });
     }
   }
+
+  public async getRole(req: Request, res: Response): Promise<void> {
+    const { userId } = req.body;
+    const results = await this._loginServices.findById(userId);
+    const { error, response: { status, message } } = results;
+    if (error) {
+      res.status(status).json({ message });
+    } else {
+      res.status(status).json({ role: message });
+    }
+  }
 }

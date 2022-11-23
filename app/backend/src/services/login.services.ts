@@ -15,4 +15,10 @@ export default class LoginService {
     if (!Bcrypt.match(password, result.password)) return this._noUserFound;
     return { error: false, response: { status: 200, message: JwtToken.generateToke(result.id) } };
   }
+
+  public async findById(id: number): Promise<iQueryResult> {
+    const result = await this._usersModel.findOne({ where: { id } });
+    if (result === null) return this._noUserFound;
+    return { error: false, response: { status: 200, message: result.role } };
+  }
 }

@@ -51,4 +51,15 @@ describe('Tests of /login', () => {
       expect(response.body.message).to.be.equal(res.INVALID_FIELDS);
     });
   });
+
+  describe('GET /login/validate', () => {
+    it('shouldn return the correct role and status 200', async () => {
+      const body = { email: "admin@admin.com", password: "secret_admin" };
+      const login = await chai.request(app).post('/login').send(body);
+      const response = await chai.request(app).get('/login/validate').set('authorization', login.body.token)
+      expect(response.status).to.be.equal(200);
+      expect(response.body.role).to.be.equal('admin');
+    })
+  });
+
 });
