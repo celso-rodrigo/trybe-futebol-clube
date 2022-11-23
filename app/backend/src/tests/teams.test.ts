@@ -22,5 +22,13 @@ describe('Tests of /teams', () => {
       expect(response.status).to.be.equal(200);
       expect(response.body).to.be.deep.equal(teamsMock);
     });
-  })
+  });
+
+  describe('GET /teams/:id', () => {
+    it('should be possible return the team based on id', async () => {
+      const response = await chai.request(app).get('/teams/5');
+      expect(response.status).to.be.equal(200);
+      expect(response.body).to.be.deep.equal(teamsMock[4]);
+    });
+  });
 });

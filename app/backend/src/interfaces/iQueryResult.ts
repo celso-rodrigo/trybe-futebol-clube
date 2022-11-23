@@ -2,6 +2,6 @@ export default interface iQueryResult {
   error: boolean
   response: {
     status: number,
-    message: string
+    message: string | object
   }
 }
