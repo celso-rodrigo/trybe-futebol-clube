@@ -1,10 +1,11 @@
+import { INVALID_FIELDS } from '../helpers/responsesMessages';
 import iQueryResult from '../interfaces/iQueryResult';
 import UsersModel from '../database/models/UsersModel';
 import Bcrypt from '../middlewares/Bcrypt';
 import JwtToken from '../middlewares/JwtToken';
 
 export default class LoginService {
-  private _noUserFound = { error: true, response: { status: 500, message: 'wip' } };
+  private _noUserFound = { error: true, response: { status: 401, message: INVALID_FIELDS } };
 
   constructor(private _usersModel = UsersModel) {}
 

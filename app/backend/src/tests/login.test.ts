@@ -27,28 +27,28 @@ describe('Tests of /login', () => {
       const body = { email: "", password: "secret_admin" };
       const response = await chai.request(app).post('/login').send(body);
       expect(response.status).to.be.equal(400);
-      expect(response.body.message).to.be.equal(res.EMPTY_FIELDS.message);
+      expect(response.body.message).to.be.equal(res.EMPTY_FIELDS);
     });
 
     it('shouldn\'t be possible to login with an empty password', async () => {
       const body = { email: "admin@admin.com", password: "" };
       const response = await chai.request(app).post('/login').send(body);
       expect(response.status).to.be.equal(400);
-      expect(response.body.message).to.be.equal(res.EMPTY_FIELDS.message);
+      expect(response.body.message).to.be.equal(res.EMPTY_FIELDS);
     });
 
     it('shouldn\'t be possible to login with a invalid email', async () => {
       const body = { email: "invalid", password: "secret_admin" };
       const response = await chai.request(app).post('/login').send(body);
       expect(response.status).to.be.equal(401);
-      expect(response.body.message).to.be.equal(res.INVALID_FIELDS.message);
+      expect(response.body.message).to.be.equal(res.INVALID_FIELDS);
     });
 
     it('shouldn\'t be possible to login with a invalid password', async () => {
       const body = { email: "admin@admin.com", password: "short" };
       const response = await chai.request(app).post('/login').send(body);
       expect(response.status).to.be.equal(401);
-      expect(response.body.message).to.be.equal(res.INVALID_FIELDS.message);
+      expect(response.body.message).to.be.equal(res.INVALID_FIELDS);
     });
   });
 });
