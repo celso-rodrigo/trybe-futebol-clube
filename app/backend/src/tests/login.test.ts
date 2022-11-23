@@ -1,4 +1,4 @@
-import * as res from './mocks/responsesMocks';
+import * as res from '../helpers/responsesMessages';
 import * as sinon from 'sinon';
 import * as chai from 'chai';
 // @ts-ignore
@@ -27,28 +27,28 @@ describe('Tests of /login', () => {
       const body = { email: "", password: "secret_admin" };
       const response = await chai.request(app).post('/login').send(body);
       expect(response.status).to.be.equal(400);
-      expect(response.body.message).to.be.equal(res.EMPTY_FIELDS);
+      expect(response.body.message).to.be.equal(res.EMPTY_FIELDS.message);
     });
 
     it('shouldn\'t be possible to login with an empty password', async () => {
       const body = { email: "admin@admin.com", password: "" };
       const response = await chai.request(app).post('/login').send(body);
       expect(response.status).to.be.equal(400);
-      expect(response.body.message).to.be.equal(res.EMPTY_FIELDS);
+      expect(response.body.message).to.be.equal(res.EMPTY_FIELDS.message);
     });
 
     it('shouldn\'t be possible to login with a invalid email', async () => {
       const body = { email: "invalid", password: "secret_admin" };
       const response = await chai.request(app).post('/login').send(body);
-      expect(response.status).to.be.equal(400);
-      expect(response.body.message).to.be.equal(res.INVALID_FIELDS);
+      expect(response.status).to.be.equal(401);
+      expect(response.body.message).to.be.equal(res.INVALID_FIELDS.message);
     });
 
     it('shouldn\'t be possible to login with a invalid password', async () => {
       const body = { email: "admin@admin.com", password: "short" };
       const response = await chai.request(app).post('/login').send(body);
-      expect(response.status).to.be.equal(400);
-      expect(response.body.message).to.be.equal(res.INVALID_FIELDS);
+      expect(response.status).to.be.equal(401);
+      expect(response.body.message).to.be.equal(res.INVALID_FIELDS.message);
     });
   });
 });
