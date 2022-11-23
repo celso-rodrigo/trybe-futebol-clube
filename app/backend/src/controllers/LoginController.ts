@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import LoginService from '../services/login.services';
+import LoginService from '../services/LoginServices';
 
 export default class LoginController {
   constructor(private _loginServices = new LoginService()) {}

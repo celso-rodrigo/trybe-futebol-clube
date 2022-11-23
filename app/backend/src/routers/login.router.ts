@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import LoginController from '../controllers/login.controller';
+import LoginController from '../controllers/LoginController';
 import ValidateLogin from '../middlewares/ValdiateLogin';
 import JwtToken from '../middlewares/JwtToken';
 
