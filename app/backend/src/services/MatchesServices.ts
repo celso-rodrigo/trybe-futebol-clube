@@ -12,4 +12,14 @@ export default class MatchesServices {
     });
     return result;
   }
+
+  public async getMatchesByProgress(inProgress: boolean): Promise<MatchesModel[]> {
+    const result = await this._matchesModel.findAll({
+      where: { inProgress },
+      include: {
+        all: true,
+        attributes: { exclude: ['id'] } },
+    });
+    return result;
+  }
 }

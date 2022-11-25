@@ -1,4 +1,4 @@
-import matchesMock from './mocks/matchesMock'
+import { allMatches, matchesEnded, matchesInProgress } from './mocks/matchesMock'
 import * as sinon from 'sinon';
 import * as chai from 'chai';
 // @ts-ignore
@@ -19,7 +19,21 @@ describe('Tests of /matches', () => {
     it('should list all matches', async () => {
       const response = await chai.request(app).get('/matches');
       expect(response.status).to.be.equal(200);
-      expect(response.body).to.be.deep.equal(matchesMock);
+      expect(response.body).to.be.deep.equal(allMatches);
+    });
+  });
+
+  describe('GET /matches?inProgress', () => {
+    it('should list all matches in progress', async () => {
+      const response = await chai.request(app).get('/matches?inProgress=true');
+      expect(response.status).to.be.equal(200);
+      expect(response.body).to.be.deep.equal(matchesInProgress);
+    });
+
+    it('should list all ended matches', async () => {
+      const response = await chai.request(app).get('/matches?inProgress=false');
+      expect(response.status).to.be.equal(200);
+      expect(response.body).to.be.deep.equal(matchesEnded);
     });
   });
 });
