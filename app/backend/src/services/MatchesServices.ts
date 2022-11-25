@@ -1,5 +1,6 @@
 import TeamsModel from '../database/models/TeamsModel';
 import MatchesModel from '../database/models/MatchesModel';
+import IMatchesBody from '../interfaces/IMatchesBody';
 
 export default class MatchesServices {
   constructor(private _matchesModel = MatchesModel, private _teamsModel = TeamsModel) {}
@@ -19,6 +20,23 @@ export default class MatchesServices {
       include: {
         all: true,
         attributes: { exclude: ['id'] } },
+    });
+    return result;
+  }
+
+  public async checkId(id: number): Promise<boolean> {
+    const result = await this._matchesModel.findByPk(id);
+    return result === null;
+  }
+
+  public async saveMatch(match: IMatchesBody): Promise<MatchesModel> {
+    const { homeTeam, awayTeam, homeTeamGoals, awayTeamGoals } = match;
+    const result = await this._matchesModel.create({
+      homeTeam,
+      awayTeam,
+      homeTeamGoals,
+      awayTeamGoals,
+      inProgress: true,
     });
     return result;
   }

@@ -16,7 +16,7 @@ export default class LoginController {
   }
 
   public async getRole(req: Request, res: Response): Promise<void> {
-    const { userId } = req.body;
+    const { userId } = req.body.user;
     const results = await this._loginServices.findById(userId as number);
     const { error, response: { status, message } } = results;
     if (error) {

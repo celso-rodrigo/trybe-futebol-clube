@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import MatchesService from '../services/MatchesServices';
 
 export default class MatchesController {
+  private _equalTeams = { message: 'It is not possible to create a match with two equal teams' };
+  private _invalidMatch = { message: 'There is no team with such id!' };
+
   constructor(private _matchesServices = new MatchesService()) {}
 
   private async _getAllMatches(req: Request, res: Response): Promise<void> {
@@ -13,6 +16,21 @@ export default class MatchesController {
     const progressType = req.query.inProgress === 'true';
     const results = await this._matchesServices.getMatchesByProgress(progressType);
     res.status(200).json(results);
+  }
+
+  private async _saveMatch(req: Request, res: Response): Promise<void> {
+    const { homeTeam, awayTeam, homeTeamGoals, awayTeamGoals } = req.body;
+    const { id, inProgress } = await this._matchesServices.saveMatch(req.body);
+    res.status(201).json({ homeTeam, awayTeam, homeTeamGoals, awayTeamGoals, id, inProgress });
+  }
+
+  public async handleSaveMatch(req: Request, res: Response): Promise<void | Response> {
+    const { homeTeam, awayTeam } = req.body;
+    if (homeTeam === awayTeam) return res.status(422).json(this._equalTeams);
+    const invalidHomeTeam = await this._matchesServices.checkId(homeTeam);
+    const invalidAwayTeam = await this._matchesServices.checkId(awayTeam);
+    if (invalidHomeTeam || invalidAwayTeam) return res.status(404).json(this._invalidMatch);
+    this._saveMatch(req, res);
   }
 
   public async handleGetMatches(req: Request, res: Response): Promise<void> {

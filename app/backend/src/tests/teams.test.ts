@@ -1,12 +1,9 @@
-import * as res from '../helpers/responsesMessages';
-import * as sinon from 'sinon';
 import * as chai from 'chai';
 // @ts-ignore
 import chaiHttp = require('chai-http');
 
 import App from '../app';
 
-import { Response } from 'superagent';
 import teamsMock from './mocks/teamsMock';
 
 chai.use(chaiHttp);

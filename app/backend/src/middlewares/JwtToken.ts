@@ -14,11 +14,11 @@ export default class JwtToken {
     try {
       const { authorization } = req.headers;
       if (!authorization) return res.status(401).json({ message: 'Token not found' });
-      const decoded = jwt.verify(authorization, process.env.JWT_SECRET as string);
-      req.body = decoded;
+      const userInfo = jwt.verify(authorization, process.env.JWT_SECRET as string);
+      req.body.user = userInfo;
       next();
     } catch (err) {
-      return res.status(401).json({ message: 'Invalid token' });
+      return res.status(401).json({ message: 'Token must be a valid token' });
     }
   }
 }
