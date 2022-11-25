@@ -3,16 +3,16 @@ import TeamsController from '../controllers/TeamsController';
 
 const teamsRouter = Router();
 
-const teamsControllet = new TeamsController();
+const teamsController = new TeamsController();
 
 teamsRouter.get(
   '/',
-  (req, res) => teamsControllet.getTeams(req, res),
+  (req, res) => teamsController.getTeams(req, res),
 );
 
 teamsRouter.get(
   '/:id',
-  (req, res) => teamsControllet.getTeamById(req, res),
+  (req, res) => teamsController.getTeamById(req, res),
 );
 
 export default teamsRouter;
