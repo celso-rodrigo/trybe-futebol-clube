@@ -91,14 +91,4 @@ describe('Tests of /login', () => {
       expect(response.body.message).to.be.equal('Token must be a valid token');
     });
   });
-
-  describe('Tests of loginServices.findUser method', () => {
-    it('LoginService should return not found when a invalid id is sent', async () => {
-      const loginService = new LoginService();
-      const result = await loginService.findById(999);
-      expect(result.error).to.be.equal(true);
-      expect(result.response.status).to.be.equal(401);
-      expect(result.response.message).to.be.equal(INVALID_LOGIN);
-    });
-  });
 });
