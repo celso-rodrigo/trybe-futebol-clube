@@ -20,4 +20,9 @@ matchesRouter.post(
   (req, res) => matchesController.handleSaveMatch(req, res),
 );
 
+matchesRouter.patch(
+  '/:id/finish',
+  (req, res) => matchesController.handleFinishMatch(req, res),
+);
+
 export default matchesRouter;

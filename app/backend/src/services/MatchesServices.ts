@@ -24,7 +24,7 @@ export default class MatchesServices {
     return result;
   }
 
-  public async checkId(id: number): Promise<boolean> {
+  public async checkInvalidId(id: number): Promise<boolean> {
     const result = await this._matchesModel.findByPk(id);
     return result === null;
   }
@@ -39,5 +39,9 @@ export default class MatchesServices {
       inProgress: true,
     });
     return result;
+  }
+
+  public async finishMatch(id: number): Promise<void> {
+    await this._matchesModel.update({ inProgress: false }, { where: { id } });
   }
 }

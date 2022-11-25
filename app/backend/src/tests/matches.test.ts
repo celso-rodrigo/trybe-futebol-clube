@@ -1,14 +1,12 @@
 import { allMatches, matchesEnded, matchesInProgress } from './mocks/matchesMock'
-import { EMPTY_FIELDS, INVALID_TYPE } from '../helpers/responsesMessages';
+import { EMPTY_FIELDS, INVALID_TYPE, INVALID_MATCH } from '../helpers/responsesMessages';
 import * as chai from 'chai';
 // @ts-ignore
 import chaiHttp = require('chai-http');
 import App from '../app';
 
 chai.use(chaiHttp);
-
 const { app } = new App();
-
 const { expect } = chai;
 
 describe('Tests of /matches', () => {
@@ -34,7 +32,7 @@ describe('Tests of /matches', () => {
     });
   });
 
-  describe('POST /matches', async () => {
+  describe('POST /matches', () => {
     it('sholdn\'t be possible to save a match with out a homeTeam', async () => {
       const loginBody = { email: "admin@admin.com", password: "secret_admin" };
       const { body: { token } } = await chai.request(app).post('/login').send(loginBody);
@@ -216,6 +214,26 @@ describe('Tests of /matches', () => {
         .set('authorization', token);
       expect(response.status).to.be.equal(201);
       expect(response.body).to.be.deep.equal({...matchesBody, id: 49, inProgress: true});
+    });
+  });
+
+  describe('PATCH /matches/:id/finish', () => {
+    it('Should be possible to finish a match', async () => {
+      const response = await chai.request(app).patch('/matches/1/finish');
+      expect(response.status).to.be.equal(200);
+      expect(response.body).to.be.deep.equal({ message: 'Finished' });
+    });
+
+    it('Shouldn\'t be possible to finish a match with a invalid id', async () => {
+      const response = await chai.request(app).patch('/matches/999/finish');
+      expect(response.status).to.be.equal(404);
+      expect(response.body).to.be.deep.equal({ message: INVALID_MATCH });
+    });
+
+    it('Shouldn\'t be possible to finish a match with a invalid id type', async () => {
+      const response = await chai.request(app).patch('/matches/string/finish');
+      expect(response.status).to.be.equal(404);
+      expect(response.body).to.be.deep.equal({ message: INVALID_MATCH });
     });
   });
 });

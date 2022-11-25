@@ -24,21 +24,32 @@ export default class MatchesController {
     res.status(201).json({ homeTeam, awayTeam, homeTeamGoals, awayTeamGoals, id, inProgress });
   }
 
+  private async _finishMatch(req: Request, res: Response): Promise<void> {
+    const matchId = Number(req.params.id);
+    this._matchesServices.finishMatch(matchId);
+    res.status(200).json({ message: 'Finished' });
+  }
+
   public async handleSaveMatch(req: Request, res: Response): Promise<void | Response> {
     const { homeTeam, awayTeam } = req.body;
     if (homeTeam === awayTeam) return res.status(422).json(this._equalTeams);
-    const invalidHomeTeam = await this._matchesServices.checkId(homeTeam);
-    const invalidAwayTeam = await this._matchesServices.checkId(awayTeam);
+    const invalidHomeTeam = await this._matchesServices.checkInvalidId(homeTeam);
+    const invalidAwayTeam = await this._matchesServices.checkInvalidId(awayTeam);
     if (invalidHomeTeam || invalidAwayTeam) return res.status(404).json(this._invalidMatch);
     this._saveMatch(req, res);
   }
 
-  public async handleGetMatches(req: Request, res: Response): Promise<void> {
+  public async handleGetMatches(req: Request, res: Response): Promise<void | Response> {
     const { inProgress } = req.query;
-    if (inProgress === undefined) {
-      this._getAllMatches(req, res);
-    } else {
-      this._getMatchesByProgress(req, res);
-    }
+    if (inProgress === undefined) return this._getAllMatches(req, res);
+    this._getMatchesByProgress(req, res);
+  }
+
+  public async handleFinishMatch(req: Request, res: Response): Promise<void | Response> {
+    const { id } = req.params;
+    if (!/[0-9]/.test(id)) return res.status(404).json(this._invalidMatch);
+    const invalidMatch = await this._matchesServices.checkInvalidId(Number(id));
+    if (invalidMatch) return res.status(404).json(this._invalidMatch);
+    this._finishMatch(req, res);
   }
 }
