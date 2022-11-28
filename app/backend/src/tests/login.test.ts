@@ -5,12 +5,9 @@ import chaiHttp = require('chai-http');
 
 import App from '../app';
 
-import LoginService from '../services/LoginServices';
-
 chai.use(chaiHttp);
 
 const { app } = new App();
-
 const { expect } = chai;
 
 describe('Tests of /login', () => {
