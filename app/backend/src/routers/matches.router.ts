@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import JwtToken from '../middlewares/JwtToken';
 import MatchesController from '../controllers/MatchesController';
-import ValidateMatches from '../middlewares/ValidateMatches';
 
 const matchesRouter = Router();
 
@@ -15,8 +14,6 @@ matchesRouter.get(
 matchesRouter.post(
   '/',
   (req, res, next) => JwtToken.verifyToken(req, res, next),
-  (req, res, next) => ValidateMatches.validateHomeTeam(req, res, next),
-  (req, res, next) => ValidateMatches.validateAwayTeam(req, res, next),
   (req, res) => matchesController.handleSaveMatch(req, res),
 );
 

@@ -47,8 +47,8 @@ export default class MatchesServices {
 
   public async updateMatch(
     id: string,
-    homeTeamGoals: string,
-    awayTeamGoals: string,
+    homeTeamGoals: number,
+    awayTeamGoals: number,
   ): Promise<void> {
     await this._matchesModel.update(
       { homeTeamGoals, awayTeamGoals },
