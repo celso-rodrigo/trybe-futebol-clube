@@ -1,5 +1,6 @@
 import ILeaderboard from '../interfaces/ILeaderboard';
 import MatchesModel from '../database/models/MatchesModel';
+import SortType from '../types/SortType';
 import Leaderboard from '../middlewares/Leaderboard';
 
 export default class LeaderboardService {
@@ -18,26 +19,60 @@ export default class LeaderboardService {
       .filter((value, index, self) => self.indexOf(value) === index);
   }
 
-  private static _sortByTeam(allMatches: MatchesModel[], teams: string[]): MatchesModel[][] {
+  private static _sortByTeam(
+    allMatches: MatchesModel[],
+    teams: string[],
+    sortType: string,
+  ): MatchesModel[][] {
     return teams.map((team) => allMatches
-      .filter((match) => match.dataValues.teamHome.teamName === team));
+      .filter((match) => match.dataValues[sortType].teamName === team));
   }
 
-  private async _getAllMatches(): Promise<MatchesModel[][]> {
+  private async _getAllMatches(sortType: SortType): Promise<MatchesModel[][]> {
     const allMatches = await this._matchesModel.findAll({
       where: { inProgress: false },
       include: { all: true },
     });
     const allTeams = LeaderboardService._getAllTeams(allMatches);
-    const matchesSortedByTeam = LeaderboardService._sortByTeam(allMatches, allTeams);
+    const matchesSortedByTeam = LeaderboardService._sortByTeam(allMatches, allTeams, sortType);
     return matchesSortedByTeam;
   }
 
-  public async getHomeMatches(): Promise<ILeaderboard[]> {
-    const allMatches = await this._getAllMatches();
-    const homeMatches = allMatches.map((team) =>
-      new Leaderboard(team, team[0].dataValues.teamHome.teamName).leaderboard);
-    const orderedMatches = LeaderboardService._sort(homeMatches);
+  private static _concatLeaderboard(hTeam: ILeaderboard, aTeam: ILeaderboard): ILeaderboard {
+    const totalPoints = hTeam.totalPoints + aTeam.totalPoints;
+    const totalGames = hTeam.totalGames + aTeam.totalGames;
+    const efficiency = (((totalPoints / 3) / totalGames) * 100).toFixed(2);
+    return {
+      name: hTeam.name,
+      totalPoints,
+      totalGames,
+      totalVictories: hTeam.totalVictories + aTeam.totalVictories,
+      totalDraws: hTeam.totalDraws + aTeam.totalDraws,
+      totalLosses: hTeam.totalLosses + aTeam.totalLosses,
+      goalsFavor: hTeam.goalsFavor + aTeam.goalsFavor,
+      goalsOwn: hTeam.goalsOwn + aTeam.goalsOwn,
+      goalsBalance: hTeam.goalsBalance + aTeam.goalsBalance,
+      efficiency,
+    };
+  }
+
+  public async getMatches(sortType: SortType): Promise<ILeaderboard[]> {
+    const allMatches = await this._getAllMatches(sortType);
+    const matches = allMatches.map((team) => (
+      new Leaderboard(team, sortType).leaderboard
+    ));
+    const orderedMatches = LeaderboardService._sort(matches);
     return orderedMatches;
+  }
+
+  public async getGlobalMatches(): Promise<ILeaderboard[]> {
+    const homeLeaderboard = await this.getMatches('teamHome');
+    const awayLeaderboard = await this.getMatches('teamAway');
+    const globalLeaderboard = homeLeaderboard.map((hMatch) => {
+      const otherMatch = awayLeaderboard.filter((aMatch) => aMatch.name === hMatch.name)[0];
+      return LeaderboardService._concatLeaderboard(hMatch, otherMatch);
+    });
+    const sortedLeaderboard = LeaderboardService._sort(globalLeaderboard);
+    return sortedLeaderboard;
   }
 }

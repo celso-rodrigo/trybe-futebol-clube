@@ -1,75 +1,96 @@
 import ILeaderboard from '../interfaces/ILeaderboard';
 import MatchesModel from '../database/models/MatchesModel';
+import SortType from '../types/SortType';
 
 export default class Leaderboard {
-  private _name: string;
-  private _totalPoints: number;
-  private _totalGames: number;
-  private _totalVictories: number;
-  private _totalDraws: number;
-  private _totalLosses: number;
-  private _goalsFavor: number;
-  private _goalsOwn: number;
-  private _goalsBalance: number;
-  private _efficiency: string;
   private _matches: MatchesModel[];
+  private _sortType: SortType;
 
-  constructor(private matches: MatchesModel[], name: string) {
-    this._name = name;
-    this._totalPoints = 0;
-    this._totalGames = matches.length;
-    this._totalVictories = 0;
-    this._totalDraws = 0;
-    this._totalLosses = 0;
-    this._goalsFavor = 0;
-    this._goalsOwn = 0;
-    this._goalsBalance = 0;
-    this._efficiency = '0';
+  constructor(private matches: MatchesModel[], sortType: SortType) {
     this._matches = matches;
-
-    this._calculateWinRate();
-    this._calculateGoals();
-    this._calculateTotalPoints();
-    this._calculateEfficiency();
+    this._sortType = sortType;
   }
 
-  private _calculateWinRate(): void {
-    this._matches.forEach((match) => {
-      if (match.homeTeamGoals > match.awayTeamGoals) this._totalVictories += 1;
-      if (match.awayTeamGoals > match.homeTeamGoals) this._totalLosses += 1;
-      if (match.homeTeamGoals === match.awayTeamGoals) this._totalDraws += 1;
-    });
+  private _getDraws(): number {
+    return this._matches.filter((match) =>
+      match.homeTeamGoals === match.awayTeamGoals).length;
   }
 
-  private _calculateGoals(): void {
-    this._matches.forEach((match) => {
-      this._goalsFavor += match.homeTeamGoals;
-      this._goalsOwn += match.awayTeamGoals;
-    });
-    this._goalsBalance = this._goalsFavor - this._goalsOwn;
+  private _teamOneVictories(): number {
+    return this._matches.filter((match) =>
+      match.homeTeamGoals > match.awayTeamGoals).length;
   }
 
-  private _calculateTotalPoints(): void {
-    this._totalPoints = this._totalVictories * 3 + this._totalDraws;
+  private _teamTwoVictories(): number {
+    return this._matches.filter((match) =>
+      match.homeTeamGoals < match.awayTeamGoals).length;
   }
 
-  private _calculateEfficiency(): void {
-    const efficiency = (((this._totalPoints / 3) / this._totalGames) * 100);
-    this._efficiency = efficiency.toFixed(2);
+  private _teamOneGoals(): number {
+    return this._matches.map((match) => match.homeTeamGoals)
+      .reduce((acc, curr) => acc + curr);
+  }
+
+  private _teamTwoGoals(): number {
+    return this._matches.map((match) => match.awayTeamGoals)
+      .reduce((acc, curr) => acc + curr);
+  }
+
+  private static _calculateTotalPoints(victories: number, draws: number): number {
+    return victories * 3 + draws;
+  }
+
+  private static _calculateEfficiency(totalPoints: number, totalGames: number): string {
+    const efficiency = (((totalPoints / 3) / totalGames) * 100);
+    return efficiency.toFixed(2);
+  }
+
+  private _homeTeamLeaderboard(): ILeaderboard {
+    const totalVictories = this._teamOneVictories();
+    const totalLosses = this._teamTwoVictories();
+    const goalsFavor = this._teamOneGoals();
+    const goalsOwn = this._teamTwoGoals();
+    const totalDraws = this._getDraws();
+    const totalPoints = Leaderboard._calculateTotalPoints(totalVictories, totalDraws);
+
+    return {
+      name: this._matches[0].dataValues.teamHome.teamName,
+      totalPoints,
+      totalGames: this._matches.length,
+      totalVictories,
+      totalDraws,
+      totalLosses,
+      goalsFavor,
+      goalsOwn,
+      goalsBalance: goalsFavor - goalsOwn,
+      efficiency: Leaderboard._calculateEfficiency(totalPoints, this._matches.length),
+    };
+  }
+
+  private _awayTeamLeaderboard(): ILeaderboard {
+    const totalVictories = this._teamTwoVictories();
+    const totalLosses = this._teamOneVictories();
+    const goalsFavor = this._teamTwoGoals();
+    const goalsOwn = this._teamOneGoals();
+    const totalDraws = this._getDraws();
+    const totalPoints = Leaderboard._calculateTotalPoints(totalVictories, totalDraws);
+
+    return {
+      name: this._matches[0].dataValues.teamAway.teamName,
+      totalPoints,
+      totalGames: this._matches.length,
+      totalVictories,
+      totalDraws,
+      totalLosses,
+      goalsFavor,
+      goalsOwn,
+      goalsBalance: goalsFavor - goalsOwn,
+      efficiency: Leaderboard._calculateEfficiency(totalPoints, this._matches.length),
+    };
   }
 
   get leaderboard(): ILeaderboard {
-    return {
-      name: this._name,
-      totalPoints: this._totalPoints,
-      totalGames: this._totalGames,
-      totalVictories: this._totalVictories,
-      totalDraws: this._totalDraws,
-      totalLosses: this._totalLosses,
-      goalsFavor: this._goalsFavor,
-      goalsOwn: this._goalsOwn,
-      goalsBalance: this._goalsBalance,
-      efficiency: this._efficiency,
-    };
+    if (this._sortType === 'teamHome') return this._homeTeamLeaderboard();
+    return this._awayTeamLeaderboard();
   }
 }

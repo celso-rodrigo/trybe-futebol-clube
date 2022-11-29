@@ -24,7 +24,7 @@ export default class MatchesServices {
     return result;
   }
 
-  public async checkInvalidId(id: number): Promise<boolean> {
+  public async checkInvalidId(id: string): Promise<boolean> {
     const result = await this._matchesModel.findByPk(id);
     return result === null;
   }
@@ -33,15 +33,26 @@ export default class MatchesServices {
     const { homeTeam, awayTeam, homeTeamGoals, awayTeamGoals } = match;
     const result = await this._matchesModel.create({
       homeTeam,
-      awayTeam,
       homeTeamGoals,
+      awayTeam,
       awayTeamGoals,
       inProgress: true,
     });
     return result;
   }
 
-  public async finishMatch(id: number): Promise<void> {
+  public async finishMatch(id: string): Promise<void> {
     await this._matchesModel.update({ inProgress: false }, { where: { id } });
+  }
+
+  public async updateMatch(
+    id: string,
+    homeTeamGoals: string,
+    awayTeamGoals: string,
+  ): Promise<void> {
+    await this._matchesModel.update(
+      { homeTeamGoals, awayTeamGoals },
+      { where: { id } },
+    );
   }
 }

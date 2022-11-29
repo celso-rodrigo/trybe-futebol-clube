@@ -21,12 +21,12 @@ export default class MatchesController {
   private async _saveMatch(req: Request, res: Response): Promise<void> {
     const { homeTeam, awayTeam, homeTeamGoals, awayTeamGoals } = req.body;
     const { id, inProgress } = await this._matchesServices.saveMatch(req.body);
-    res.status(201).json({ homeTeam, awayTeam, homeTeamGoals, awayTeamGoals, id, inProgress });
+    res.status(201).json({ id, homeTeam, homeTeamGoals, awayTeam, awayTeamGoals, inProgress });
   }
 
   private async _finishMatch(req: Request, res: Response): Promise<void> {
-    const matchId = Number(req.params.id);
-    this._matchesServices.finishMatch(matchId);
+    const { id } = req.params;
+    this._matchesServices.finishMatch(id);
     res.status(200).json({ message: 'Finished' });
   }
 
@@ -48,8 +48,15 @@ export default class MatchesController {
   public async handleFinishMatch(req: Request, res: Response): Promise<void | Response> {
     const { id } = req.params;
     if (!/[0-9]/.test(id)) return res.status(404).json(this._invalidMatch);
-    const invalidMatch = await this._matchesServices.checkInvalidId(Number(id));
+    const invalidMatch = await this._matchesServices.checkInvalidId(id);
     if (invalidMatch) return res.status(404).json(this._invalidMatch);
     this._finishMatch(req, res);
+  }
+
+  public async updateMatch(req: Request, res: Response): Promise<void | Response> {
+    const { id } = req.params;
+    const { homeTeamGoals, awayTeamGoals } = req.body;
+    await this._matchesServices.updateMatch(id, homeTeamGoals, awayTeamGoals);
+    res.status(200).json({ message: 'Match updated' });
   }
 }

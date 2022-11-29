@@ -5,7 +5,7 @@ import chaiHttp = require('chai-http');
 
 import App from '../app';
 
-import leaderboardMock from './mocks/leaderboardMock'
+import { homeLeaderboard, awayLeaderboard } from './mocks/leaderboardMock'
 
 chai.use(chaiHttp);
 
@@ -17,7 +17,15 @@ describe('Tests of /leaderboard', () => {
     it('should return all finished matches sorted and in the right format', async () => {
       const response = await chai.request(app).get('/leaderboard/home');
       expect(response.status).to.be.equal(200);
-      expect(response.body).to.be.deep.equal(leaderboardMock);
+      expect(response.body).to.be.deep.equal(homeLeaderboard);
+    });
+  });
+
+  describe('GET /leaderboard/away', () => {
+    it.only('should return all finished matches sorted and in the right format', async () => {
+      const response = await chai.request(app).get('/leaderboard/away');
+      expect(response.status).to.be.equal(200);
+      expect(response.body).to.be.deep.equal(awayLeaderboard);
     });
   });
 });
