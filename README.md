@@ -4,7 +4,7 @@
 <br/>
 
 <h2>O quê foi desenvolvido</h2>
-<p>Foi desenvolvido um CRUD (Create, Read, Update e Delete) de palestrantes utilizando o módulo <a href="https://nodejs.org/api/fs.html">fs</a> para ler e escrever arquivos.<p>
+<p>Foi desenvolvida com auxílio do docker uma aplicação Full Stack que simula um site onde usuários podem acompanhar e atualizar placares de jogos de futebol.<p>
 <br/>
   
 <h2>O quê foi avaliado</h2>
