@@ -19,7 +19,7 @@
 <ol>
   <li>
     <p>Clone o repositório</p>
-    <pre>git clone git@github.com:celso-rodrigo/talker-manager.git</pre>
+    <pre>git clone git@github.com:celso-rodrigo/trybe-futebol-clube.git</pre>
   </li>
   <li>
     <p>Abra a pasta do repositório</p>
@@ -29,7 +29,32 @@
     <pre>npm install</pre>
   </li>
   <li>
-    <p>Inicie o projetot</p>
-    <pre>npm start</pre>
+    <p>Suba os Docker containers</p>
+    <pre>npm run compose:up</pre>
+  </li>
+  <li>
+    <p>Acesse a aplicação pelo navegador</p>
+    <a href="http://localhost:3000/">localhost:3000</a>
+  </li>
+  <li>
+    <p>Efetue o login</p>
+    
+  <table>
+    <tr>
+      <th>Tipo de Usuário</th>
+      <th>Email</th>
+      <th>Senha</th>
+    </tr>
+    <tr>
+      <td>Administrador</td>
+      <td>admin@admin.com</td>
+      <td>secret_admin</td>
+    </tr>
+    <tr>
+      <td>Comum</td>
+      <td>user@user.com</td>
+      <td>secret_user</td>
+    </tr>
+  </table>
   </li>
 </ol>
