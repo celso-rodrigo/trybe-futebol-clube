@@ -4,13 +4,17 @@
 <br/>
 
 <h2>O quê foi desenvolvido</h2>
-<p>Foi desenvolvida com auxílio do docker uma aplicação Full Stack que simula um site onde usuários podem acompanhar e atualizar placares de jogos de futebol.<p>
+<p>Com auxílio de Docker containers foi desenvolvida uma aplicação Full Stack que permite usuários acompanharem placares de jogos de futebol. É possível entrar como usuário comum para consumir os dados ou efetuar login como administrador para poder editar ou adicionar novas partidas.</p>
+<p>O Front-end da aplicação foi desenvolvido pela <a href="https://www.betrybe.com/">Trybe</a> e já estava pronto para consumir os dados necessários. Meu papel nesse projeto foi desenvolver todo o Back-end para fornecer os dados corretos, assim como garantir a cobertura de testes da aplicação e o bom funcionamento dos containers Docker.</p>
 <br/>
   
 <h2>O quê foi avaliado</h2>
 <ul>
-  <li>Aderência do código às especificações;</li>
-  <li>Organização do código. Uso de middlewares e routers.</li>
+  <li>Realização da dockerização dos apps, network, volume e compose;</li>
+  <li>Modelagem de dados com MySQL através do Sequelize;</li>
+  <li>Criação e associação de tabelas usando models do sequelize;</li>
+  <li>Construção de uma API REST com endpoints para consumir os models criados;</li>
+  <li>Construção de um CRUD com TypeScript, utilizando ORM.</li>
 </ul>
 
 <br/>
